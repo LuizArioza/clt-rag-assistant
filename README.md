@@ -37,6 +37,7 @@ flowchart LR
 | Embeddings | Ollama + `nomic-embed-text` |
 | Geração de texto (LLM) | Ollama + `llama3.2` |
 | Testes | JUnit 5 + Mockito |
+| Frontend | React + Vite |
 | Infraestrutura local | Docker Compose |
 | CI | GitHub Actions |
 
@@ -53,7 +54,7 @@ flowchart LR
 
 ## Como rodar localmente
 
-Pré-requisitos: **Java 21**, **Maven** e **Docker** instalados.
+Pré-requisitos: **Java 21**, **Maven**, **Docker** e (pra usar o frontend) **Node.js**.
 
 ```bash
 # 1. Sobe o Postgres (com pgvector) e o Ollama
@@ -70,7 +71,7 @@ mvn spring-boot:run
 curl -X POST http://localhost:8080/ingestao/executar
 ```
 
-Com tudo rodando, pergunte algo:
+Com tudo rodando, pergunte algo direto pela API:
 
 ```
 http://localhost:8080/assistente?pergunta=quantas horas extras posso fazer por dia
@@ -82,6 +83,21 @@ http://localhost:8080/assistente?pergunta=quantas horas extras posso fazer por d
   "fontes": ["Art. 59", "Art. 71", "Art. 58"]
 }
 ```
+
+## Frontend
+
+Além da API, o projeto tem uma interface web em **React + Vite** (pasta `frontend/`)
+que consome o endpoint `/assistente` — um campo de pergunta, loading e a resposta
+exibida junto com os artigos usados como fonte.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Depois é só abrir `http://localhost:5173` no navegador (com o backend já rodando
+em paralelo, passo anterior).
 
 ## Testes
 
@@ -109,7 +125,7 @@ públicas oficiais. Expandir a base é só adicionar mais entradas em
 
 - [ ] Expandir a base de artigos da CLT
 - [ ] Busca híbrida (vetorial + texto)
-- [ ] Interface web simples
+- [x] Interface web simples
 - [ ] Deploy público
 - [ ] Avaliação automática da qualidade das respostas
 
@@ -120,8 +136,15 @@ src/main/java/com/luizarioza/cltrag/
 ├── api/          # health checks
 ├── assistente/    # orquestra busca + geração (o "RAG" propriamente dito)
 ├── busca/         # busca por similaridade vetorial no Postgres
+├── config/        # configuração do Spring (CORS, etc.)
 ├── embedding/     # geração de embeddings via Ollama
 ├── erro/          # tratamento de erro centralizado
 ├── geracao/       # geração de texto via Ollama (LLM)
 └── ingestao/      # pipeline de carga dos artigos da CLT
+
+frontend/
+├── index.html
+└── src/
+    ├── App.jsx    # interface do assistente (campo de pergunta + resposta)
+    └── main.jsx   # ponto de entrada do React
 ```
