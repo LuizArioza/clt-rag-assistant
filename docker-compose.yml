@@ -31,5 +31,18 @@ services:
     volumes:
       - clt-rag-db-data:/var/lib/postgresql/data
 
+  # Ollama é o programa que roda modelos de IA (embeddings e, mais pra frente, o LLM
+  # que gera as respostas) localmente na sua máquina, sem custo e sem chave de API.
+  # Rodar ele via Docker (em vez de instalar nativo no Windows) mantém tudo consistente
+  # com o resto do projeto - um único "docker compose up" sobe banco + IA juntos.
+  ollama:
+    image: ollama/ollama
+    container_name: clt-rag-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - clt-rag-ollama-data:/root/.ollama
+
 volumes:
   clt-rag-db-data:
+  clt-rag-ollama-data:
