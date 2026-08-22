@@ -49,6 +49,51 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+            spring-boot-starter-jdbc: traz o suporte básico do Spring pra falar com um banco
+            relacional via JDBC (o "protocolo" padrão do Java pra conversar com bancos SQL).
+            Isso nos dá a classe JdbcTemplate, que usamos pra rodar queries sem escrever
+            o código repetitivo de abrir/fechar conexão na mão.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!--
+            Driver JDBC do PostgreSQL - é a "tradução" entre os comandos genéricos do Java
+            e o protocolo específico que o Postgres entende. Sem isso, o Spring não sabe
+            como conversar com um banco Postgres especificamente.
+            scope=runtime porque só é necessário quando a aplicação roda, não pra compilar.
+        -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            Flyway: gerencia as mudanças de estrutura do banco (criar tabelas, extensões etc.)
+            através de arquivos SQL versionados em src/main/resources/db/migration.
+            Em vez de você criar tabelas manualmente e torcer pra lembrar o que fez,
+            cada mudança vira um arquivo numerado que roda automaticamente quando a
+            aplicação sobe - e fica registrado no próprio banco quais já rodaram.
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!--
+            A partir do Flyway 10, o suporte a cada banco específico (Postgres, MySQL etc.)
+            veio pra um módulo separado - por isso precisamos desta dependência além da
+            flyway-core.
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

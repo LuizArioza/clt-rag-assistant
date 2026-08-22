@@ -1,0 +1,35 @@
+# O Docker Compose é uma ferramenta pra descrever, num arquivo, quais containers
+# sua aplicação precisa pra rodar - aqui, só um: o banco de dados. Em vez de digitar
+# um comando gigante toda vez que quiser subir o Postgres, você descreve uma vez
+# aqui e depois só roda "docker compose up".
+
+services:
+  db:
+    # pgvector/pgvector é uma imagem oficial do Postgres já com a extensão pgvector
+    # pré-instalada (pg16 = Postgres versão 16). Sem essa imagem específica, teríamos
+    # que instalar a extensão manualmente dentro de um Postgres comum.
+    image: pgvector/pgvector:pg16
+    container_name: clt-rag-db
+
+    # Essas variáveis de ambiente configuram o banco na primeira vez que o container
+    # é criado: nome do banco, usuário e senha. Precisam bater com o que colocamos
+    # no application.yml (spring.datasource).
+    environment:
+      POSTGRES_DB: cltrag
+      POSTGRES_USER: cltrag
+      POSTGRES_PASSWORD: cltrag
+
+    # "5432:5432" liga a porta 5432 da sua máquina (esquerda) à porta 5432 dentro
+    # do container (direita) - é assim que a aplicação Spring Boot, rodando fora
+    # do Docker, consegue enxergar o banco que está dentro do Docker.
+    ports:
+      - "5432:5432"
+
+    # Um "volume" é um espaço de armazenamento que sobrevive mesmo se você parar
+    # ou recriar o container. Sem isso, cada vez que você desse "docker compose down"
+    # perderia todos os dados do banco.
+    volumes:
+      - clt-rag-db-data:/var/lib/postgresql/data
+
+volumes:
+  clt-rag-db-data:
