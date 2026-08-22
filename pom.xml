@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        Todo projeto Spring Boot "herda" de um pom.xml pai chamado spring-boot-starter-parent.
+        Isso é o que faz a mágica de você não precisar escolher manualmente a versão de cada
+        biblioteca do ecossistema Spring: o parent já define versões testadas e compatíveis
+        entre si (isso evita o clássico problema de "biblioteca A não é compatível com B").
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+        <relativePath/>
+    </parent>
+
+    <!-- Identidade do seu projeto: quem é o "dono" (groupId) e o nome do artefato (artifactId) -->
+    <groupId>com.luizarioza</groupId>
+    <artifactId>clt-rag-assistant</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>clt-rag-assistant</name>
+    <description>Assistente RAG sobre a CLT - projeto de portfolio</description>
+
+    <properties>
+        <!-- Mesmo com um JDK mais novo instalado, mandamos o Maven compilar mirando a versão 21 (LTS) -->
+        <java.version>21</java.version>
+    </properties>
+
+    <dependencies>
+        <!--
+            spring-boot-starter-web: traz tudo que precisamos pra criar uma API REST -
+            embute um servidor Tomcat embutido, o Spring MVC (controllers, @GetMapping etc.)
+            e conversão automática de JSON. É o "starter" mais básico de todo projeto web em Spring.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            spring-boot-starter-test: traz JUnit 5, Mockito e utilitários de teste do Spring.
+            Só é usado durante os testes (scope=test), não entra no jar final.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Este plugin é o que permite rodar "mvn spring-boot:run" e empacotar
+                o projeto inteiro (com todas as dependências) num único .jar executável.
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

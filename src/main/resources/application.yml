@@ -1,0 +1,11 @@
+# Este arquivo é onde configuramos o comportamento da aplicação Spring Boot.
+# Por enquanto está mínimo - só define o nome da aplicação e a porta do servidor
+# (8080 já é o padrão, está aqui só pra você ver onde mexeria se precisasse mudar).
+# Nas próximas etapas vamos adicionar aqui a conexão com o banco de dados.
+
+spring:
+  application:
+    name: clt-rag-assistant
+
+server:
+  port: 8080
