@@ -3,6 +3,7 @@ package com.luizarioza.cltrag.ingestao;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luizarioza.cltrag.embedding.OllamaEmbeddingService;
+import com.luizarioza.cltrag.embedding.VetorPostgresUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class IngestaoService {
 
         for (ArtigoClt artigo : artigos) {
             double[] embedding = embeddingService.gerarEmbedding(artigo.texto());
-            String vetorFormatadoParaPostgres = formatarVetor(embedding);
+            String vetorFormatadoParaPostgres = VetorPostgresUtils.formatarParaPostgres(embedding);
 
             // O "?::vector" diz pro Postgres: "receba esse parâmetro como texto e
             // converta pro tipo vector" - é assim que passamos um vetor de 768
@@ -66,22 +67,6 @@ public class IngestaoService {
             return objectMapper.readValue(inputStream, new TypeReference<List<ArtigoClt>>() {
             });
         }
-    }
-
-    /**
-     * O pgvector espera o vetor escrito como texto no formato "[0.1,0.2,0.3]".
-     * Essa função só monta essa string a partir do array de doubles.
-     */
-    private String formatarVetor(double[] embedding) {
-        StringBuilder construtor = new StringBuilder("[");
-        for (int i = 0; i < embedding.length; i++) {
-            if (i > 0) {
-                construtor.append(",");
-            }
-            construtor.append(embedding[i]);
-        }
-        construtor.append("]");
-        return construtor.toString();
     }
 
 }
