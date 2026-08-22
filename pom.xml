@@ -106,7 +106,17 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
+
+    <!--
+        NOTA: os testes que usam Mockito (@Mock) precisam rodar com o JDK 21 (LTS),
+        não com o JDK 26 - versões muito recentes do Java bloqueiam o mecanismo que
+        o Mockito usa pra criar objetos simulados, e ainda não existe uma correção
+        simples pra isso. Pra rodar "mvn test", aponte o JAVA_HOME temporariamente
+        pro JDK 21 nessa janela do terminal antes de rodar o comando. A aplicação
+        em si ("mvn spring-boot:run") continua funcionando normalmente no JDK 26.
+    -->
 
 </project>

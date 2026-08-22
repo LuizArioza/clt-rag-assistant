@@ -2,7 +2,10 @@ package com.luizarioza.cltrag.assistente;
 
 import com.luizarioza.cltrag.busca.BuscaService;
 import com.luizarioza.cltrag.busca.ResultadoBusca;
+import com.luizarioza.cltrag.erro.PerguntaInvalidaException;
 import com.luizarioza.cltrag.geracao.OllamaGeracaoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,8 @@ import java.util.List;
 @Service
 public class AssistenteService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AssistenteService.class);
+
     private static final int QUANTIDADE_DE_ARTIGOS_NO_CONTEXTO = 3;
 
     private final BuscaService buscaService;
@@ -26,6 +31,16 @@ public class AssistenteService {
     }
 
     public RespostaAssistente perguntar(String pergunta) {
+        // Validação simples: sem isso, uma pergunta vazia ainda geraria um
+        // embedding e chamaria o LLM à toa, gastando tempo/recursos pra nada.
+        // O GlobalExceptionHandler intercepta essa exceção e devolve um 400
+        // com mensagem clara, em vez de deixar o erro estourar mais na frente.
+        if (pergunta == null || pergunta.isBlank()) {
+            throw new PerguntaInvalidaException("A pergunta não pode estar vazia.");
+        }
+
+        logger.info("Pergunta recebida: {}", pergunta);
+
         // 1. Recupera os artigos mais relevantes pra pergunta (a parte "Retrieval").
         List<ResultadoBusca> artigosRelevantes = buscaService.buscar(pergunta, QUANTIDADE_DE_ARTIGOS_NO_CONTEXTO);
 
@@ -40,6 +55,8 @@ public class AssistenteService {
         List<String> fontes = artigosRelevantes.stream()
                 .map(ResultadoBusca::numeroArtigo)
                 .toList();
+
+        logger.info("Resposta gerada com {} fonte(s): {}", fontes.size(), fontes);
 
         return new RespostaAssistente(respostaGerada.strip(), fontes);
     }
